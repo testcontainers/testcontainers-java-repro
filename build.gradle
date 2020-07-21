@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Testcontainers BOM dependency to control versions. Please use the latest version.
+    testImplementation platform("org.testcontainers:testcontainers-bom:1.15.0-rc1")
+
+    // Testcontainers dependencies. Please add other modules if required. Versions are applied from the BOM.
+    testImplementation "org.testcontainers:testcontainers"
+
+    // Supporting libs - add others if required
+    testImplementation "junit:junit:4.13"
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+}
