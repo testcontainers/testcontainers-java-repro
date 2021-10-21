@@ -1,32 +1,69 @@
 package org.testcontainers.repro;
 
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.containers.BrowserWebDriverContainer;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testcontainers.utility.DockerImageName;
 
 public class ReproExampleTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReproExampleTest.class);
 
-    /**
-     * Placeholder for a piece of code that demonstrates the bug. You can use this as a starting point, or replace
-     * entirely.
-     * <p>
-     * Ideally this would be a failing test. If it's excessively difficult to form as a test (e.g. relates to log
-     * output, teardown or other side effects) then it would be sufficient to explain the behaviour in the issue
-     * description.
-     */
     @Test
-    public void demonstration() {
+    public void demoKafka() {
         try (
             // customize the creation of a container as required
-            GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse("redis:6.0.5"))
+            KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1"))
+        ) {
+            kafka.start();
+            assertTrue(kafka.isRunning());
+
+            // ...
+        }
+    }
+
+    @Test
+    public void demoRedis() {
+        try (
+            // customize the creation of a container as required
+            GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:6.0.5"))
                     .withExposedPorts(6379)
         ) {
-            container.start();
+            redis.start();
+            assertTrue(redis.isRunning());
 
+            // ...
+        }
+    }
+
+    @Test
+    public void demoSelenium() {
+        try (
+            // customize the creation of a container as required
+            BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer().withCapabilities(new ChromeOptions())
+                    
+        ) {
+            chrome.start();
+            assertTrue(chrome.isRunning());
+            // ...
+        }
+    }
+
+    @Test
+    public void demoSeleniumSkippingRecording() {
+        try (
+            // customize the creation of a container as required
+            BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer().withCapabilities(new ChromeOptions())
+                    .withRecordingMode(org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.SKIP, null)
+                    
+        ) {
+            chrome.start();
+            assertTrue(chrome.isRunning());
             // ...
         }
     }
