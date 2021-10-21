@@ -45,7 +45,22 @@ public class ReproExampleTest {
     public void demoSelenium() {
         try (
             // customize the creation of a container as required
-            BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer().withCapabilities(new ChromeOptions());        
+            BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer().withCapabilities(new ChromeOptions())
+                    
+        ) {
+            chrome.start();
+            assertTrue(chrome.isRunning());
+            // ...
+        }
+    }
+
+    @Test
+    public void demoSeleniumSkippingRecording() {
+        try (
+            // customize the creation of a container as required
+            BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer().withCapabilities(new ChromeOptions())
+                    .withRecordingMode(org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.SKIP, null)
+                    
         ) {
             chrome.start();
             assertTrue(chrome.isRunning());
