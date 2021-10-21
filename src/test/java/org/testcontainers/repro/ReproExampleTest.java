@@ -3,7 +3,7 @@ package org.testcontainers.repro;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public class ReproExampleTest {
@@ -22,10 +22,9 @@ public class ReproExampleTest {
     public void demonstration() {
         try (
             // customize the creation of a container as required
-            GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse("redis:6.0.5"))
-                    .withExposedPorts(6379)
+            KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1"))
         ) {
-            container.start();
+            kafka.start();
 
             // ...
         }

@@ -1,0 +1,17 @@
+services:
+  dind:
+    image: docker:dind
+    command: "--tls=false"
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+      DOCKER_DRIVER: overlay2
+  build:
+    image: maven
+    volumes:
+      - ".:/work"
+      - "~/.m2:/root/.m2"
+    working_dir: "/work"
+    command: "./mvnw test"
+    environment:
+      DOCKER_HOST: "tcp://dind:2375"
