@@ -3,6 +3,7 @@ package org.testcontainers.repro;
 import org.junit.Assert;
 import org.junit.Test;
 import org.testcontainers.containers.BindMode;
+import org.testcontainers.containers.Container;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -17,7 +18,7 @@ import java.sql.Statement;
 public class ReproExampleTest {
 
     @Test
-    public void bindMountLogFiles() throws IOException {
+    public void bindMountLogFiles() throws IOException, InterruptedException {
         try (
                 GenericContainer<?> container = new GenericContainer<>("nginx:1.19.0-alpine")
                         .withExposedPorts(80)
@@ -33,10 +34,16 @@ public class ReproExampleTest {
             long now = System.currentTimeMillis();
             performRequestAgainstContainer(container, "/foobar/" + now);
 
+            // manually write a file into the container
+            Container.ExecResult result = container.execInContainer("/bin/sh",  "-c", "echo '" + now + " Hello, World!' >> /var/log/nginx/test.log");
+
             // check that nginx/error.log in the project directory contains the now timestamp
             String errorLog = System.getProperty("user.dir") + "/nginx/error.log";
             String errorLogContents = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(errorLog)));
-            Assert.assertTrue(errorLogContents.contains(Long.toString(now)));
+
+            String testLog = System.getProperty("user.dir") + "/nginx/test.log";
+            String testLogContents = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(testLog)));
+            Assert.assertTrue(testLogContents.contains(Long.toString(now)));
 
         }
 
